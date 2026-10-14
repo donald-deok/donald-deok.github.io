@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>勤務表ビルダー — Duty Roster Maker</title>
+<meta name="description" content="病棟・介護施設・店舗の勤務表を、ルールに沿って自動で作成し、スタッフに公開・通知します。">
+<link rel="icon" href="https://duty-roster-89f38.web.app/duty/favicon.png">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2933; --muted: #52606d; --line: #e4e7eb;
+    --accent: #0f766e; --accent-fg: #ffffff; --card: #f5f7fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #374151;
+      --accent: #2dd4bf; --accent-fg: #042f2e; --card: #1f2937;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Apple SD Gothic Neo", "Noto Sans JP", "Noto Sans KR", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  nav.langs { display: flex; gap: 12px; justify-content: flex-end; font-size: 14px; }
+  nav.langs a { color: var(--muted); text-decoration: none; }
+  nav.langs a[aria-current="true"] { color: var(--fg); font-weight: 600; }
+  h1 { font-size: 30px; line-height: 1.3; margin: 32px 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; }
+  .lead { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-block; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; }
+  .btn.primary { background: var(--accent); color: var(--accent-fg); }
+  .btn.secondary { border: 1px solid var(--line); color: var(--fg); }
+  ul.features { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ul.features li { background: var(--card); border-radius: 12px; padding: 14px 16px; }
+  ul.features b { display: block; }
+  .contact { background: var(--card); border-radius: 14px; padding: 20px; }
+  .contact ol { padding-left: 20px; margin: 8px 0 16px; }
+  .small { font-size: 14px; color: var(--muted); }
+  footer { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 16px; }
+  footer a { color: var(--muted); }
+  [data-lang] { display: none; }
+  html[lang="ja"] [data-lang="ja"], html[lang="ko"] [data-lang="ko"], html[lang="en"] [data-lang="en"] { display: block; }
+</style>
+<script>
+  (function () {
+    var q = new URLSearchParams(location.search).get("lang");
+    var nav = (navigator.language || "ja").slice(0, 2);
+    var lang = ["ja", "ko", "en"].indexOf(q) >= 0 ? q : (["ja", "ko", "en"].indexOf(nav) >= 0 ? nav : "en");
+    document.documentElement.lang = lang;
+  })();
+</script>
+</head>
+<body>
+<main>
+  <nav class="langs">
+    <a href="?lang=ja" data-l="ja">日本語</a>
+    <a href="?lang=ko" data-l="ko">한국어</a>
+    <a href="?lang=en" data-l="en">English</a>
+  </nav>
+
+  <!-- 日本語 -->
+  <section data-lang="ja">
+    <h1>1か月分の勤務表を、数分で。</h1>
+    <p class="lead">勤務表ビルダーは、病棟・介護施設・店舗の勤務表を、ルールに沿って自動で作成し、スタッフに公開して通知まで届けるアプリです。</p>
+    <div class="buttons">
+      <a class="btn primary" href="https://duty-roster-89f38.web.app/duty/">Webで使ってみる</a>
+      <a class="btn secondary" href="#contact-ja">施設・病棟での導入の相談</a>
+    </div>
+
+    <h2>できること</h2>
+    <ul class="features">
+      <li><b>自動作成</b>連続勤務、夜勤明けの休み、月の夜勤回数などのルールと、日ごとの必要人数に合わせて1か月を埋めます。</li>
+      <li><b>作れない理由を数字で</b>「3日は5人必要ですが、勤務できるのは4人です」のように、足りないところを示します。</li>
+      <li><b>ルールチェック</b>違反しているマスを表の上で示し、タップでそのマスへ移動します。</li>
+      <li><b>スタッフへの公開と通知</b>招待リンクやQRコードでスタッフを招き、公開すると勤務が変わった人にだけ通知が届きます。スタッフは無料です。</li>
+      <li><b>書き出し</b>画像、Excel（.xlsx）、PDF、CSVで保存できます。</li>
+    </ul>
+
+    <h2 id="contact-ja">施設・病棟での導入について</h2>
+    <div class="contact">
+      <p>複数の病棟・チームでの利用、請求書でのお支払い、最初の設定のお手伝いなど、施設単位での導入をご相談いただけます。下のボタンからメールで、次の内容をお知らせください。</p>
+      <ol>
+        <li>施設名と種別（病棟・介護施設・店舗など）</li>
+        <li>スタッフ数、病棟・チームの数</li>
+        <li>いま勤務表をどう作っているか（Excel・紙など）</li>
+        <li>ご希望（請求書払い、複数病棟、設定の手伝いなど）</li>
+      </ol>
+      <a class="btn primary" href="mailto:kdhmny@gmail.com?subject=%E5%8B%A4%E5%8B%99%E8%A1%A8%E3%83%93%E3%83%AB%E3%83%80%E3%83%BC%20%E5%B0%8E%E5%85%A5%E3%81%AE%E7%9B%B8%E8%AB%87&body=%E6%96%BD%E8%A8%AD%E5%90%8D%E3%81%A8%E7%A8%AE%E5%88%A5%EF%BC%9A%0A%E3%82%B9%E3%82%BF%E3%83%83%E3%83%95%E6%95%B0%E3%80%81%E7%97%85%E6%A3%9F%E3%83%BB%E3%83%81%E3%83%BC%E3%83%A0%E3%81%AE%E6%95%B0%EF%BC%9A%0A%E3%81%84%E3%81%BE%E3%81%AE%E5%8B%A4%E5%8B%99%E8%A1%A8%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9%EF%BC%9A%0A%E3%81%94%E5%B8%8C%E6%9C%9B%EF%BC%9A%0A">メールで相談する</a>
+      <p class="small">個人開発者が運営しています。通常2営業日以内にお返事します。</p>
+    </div>
+
+    <h2>プライバシー</h2>
+    <p>勤務表は東京のGoogle Firebaseサーバーにあるアカウントに保管します。運営者が内容を見たり、分析や広告に使ったりすることはありません。公開した勤務表を見られるのは同じ病棟のメンバーだけです。</p>
+  </section>
+
+  <!-- 한국어 -->
+  <section data-lang="ko">
+    <h1>한 달 치 근무표를 몇 분 만에.</h1>
+    <p class="lead">근무표 메이커는 병동·요양 시설·매장의 근무표를 규칙에 맞춰 자동으로 짜고, 직원에게 공개하고 알림까지 보내는 앱이에요.</p>
+    <div class="buttons">
+      <a class="btn primary" href="https://duty-roster-89f38.web.app/duty/">웹에서 써 보기</a>
+      <a class="btn secondary" href="#contact-ko">시설·병동 도입 문의</a>
+    </div>
+
+    <h2>할 수 있는 일</h2>
+    <ul class="features">
+      <li><b>자동 작성</b>연속 근무, 나이트 뒤 휴무, 월 나이트 횟수 같은 규칙과 날마다 필요한 인원에 맞춰 한 달을 채워요.</li>
+      <li><b>못 짜는 이유를 숫자로</b>"3일은 5명이 필요한데 근무할 수 있는 사람은 4명이에요"처럼 모자란 곳을 보여줘요.</li>
+      <li><b>규칙 검사</b>규칙을 어긴 칸을 표에 표시하고, 누르면 그 칸으로 이동해요.</li>
+      <li><b>직원 공개와 알림</b>초대 링크나 QR 코드로 직원을 초대하고, 공개하면 근무가 바뀐 사람에게만 알림이 가요. 직원은 무료예요.</li>
+      <li><b>내보내기</b>이미지, Excel(.xlsx), PDF, CSV로 저장할 수 있어요.</li>
+    </ul>
+
+    <h2 id="contact-ko">시설·병동 도입 문의</h2>
+    <div class="contact">
+      <p>여러 병동·팀에서 쓰기, 세금계산서·계좌이체 결제, 처음 설정 도움 같은 시설 단위 도입을 상담해 드려요. 아래 버튼으로 메일을 보내 주시면서 다음 내용을 알려 주세요.</p>
+      <ol>
+        <li>시설 이름과 종류(병동·요양 시설·매장 등)</li>
+        <li>직원 수, 병동·팀 수</li>
+        <li>지금 근무표를 짜는 방법(엑셀·종이 등)</li>
+        <li>원하시는 것(계좌이체 결제, 여러 병동, 설정 도움 등)</li>
+      </ol>
+      <a class="btn primary" href="mailto:kdhmny@gmail.com?subject=%EA%B7%BC%EB%AC%B4%ED%91%9C%20%EB%A9%94%EC%9D%B4%EC%BB%A4%20%EB%8F%84%EC%9E%85%20%EB%AC%B8%EC%9D%98&body=%EC%8B%9C%EC%84%A4%20%EC%9D%B4%EB%A6%84%EA%B3%BC%20%EC%A2%85%EB%A5%98%3A%0A%EC%A7%81%EC%9B%90%20%EC%88%98%2C%20%EB%B3%91%EB%8F%99%C2%B7%ED%8C%80%20%EC%88%98%3A%0A%EC%A7%80%EA%B8%88%20%EA%B7%BC%EB%AC%B4%ED%91%9C%20%EC%A7%9C%EB%8A%94%20%EB%B0%A9%EB%B2%95%3A%0A%EC%9B%90%ED%95%98%EC%8B%9C%EB%8A%94%20%EA%B2%83%3A%0A">메일로 문의하기</a>
+      <p class="small">개인 개발자가 운영해요. 보통 영업일 2일 안에 답장드려요.</p>
+    </div>
+
+    <h2>개인정보</h2>
+    <p>근무표는 도쿄에 있는 Google Firebase 서버의 계정에 보관해요. 운영자는 내용을 보거나 분석·광고에 쓰지 않아요. 공개한 근무표는 같은 병동 멤버만 볼 수 있어요.</p>
+  </section>
+
+  <!-- English -->
+  <section data-lang="en">
+    <h1>A month of shifts in minutes.</h1>
+    <p class="lead">Duty Roster Maker fills a ward, care home or shop roster by your rules, then publishes it to your staff and notifies them.</p>
+    <div class="buttons">
+      <a class="btn primary" href="https://duty-roster-89f38.web.app/duty/">Try it on the web</a>
+      <a class="btn secondary" href="#contact-en">Rolling it out to a team</a>
+    </div>
+
+    <h2>What it does</h2>
+    <ul class="features">
+      <li><b>Auto-fill</b>Fills the month to match daily headcount and rules such as consecutive days, rest after nights and nights per month.</li>
+      <li><b>Says why it can't</b>Shows the gap in numbers: "the 3rd needs 5 people, only 4 can work".</li>
+      <li><b>Rule check</b>Marks every cell that breaks a rule; tap one in the list to jump to it.</li>
+      <li><b>Publish to staff</b>Invite staff with a link or QR code. When you republish, only people whose shifts changed get a notification. Staff use it free.</li>
+      <li><b>Export</b>Save as an image, Excel (.xlsx), PDF or CSV.</li>
+    </ul>
+
+    <h2 id="contact-en">Rolling it out to a ward or facility</h2>
+    <div class="contact">
+      <p>For several wards or teams, paying by invoice, or help with the first setup, send an email with:</p>
+      <ol>
+        <li>Your facility and its type (ward, care home, shop…)</li>
+        <li>Number of staff and wards/teams</li>
+        <li>How you make the roster today (spreadsheet, paper…)</li>
+        <li>What you need (invoice billing, several wards, setup help…)</li>
+      </ol>
+      <a class="btn primary" href="mailto:kdhmny@gmail.com?subject=Duty%20Roster%20Maker%20for%20our%20team&body=Facility%20and%20type%3A%0AStaff%20and%20wards%2Fteams%3A%0AHow%20we%20make%20the%20roster%20today%3A%0AWhat%20we%20need%3A%0A">Email us</a>
+      <p class="small">Run by an independent developer. Replies usually within two business days.</p>
+    </div>
+
+    <h2>Privacy</h2>
+    <p>Rosters are kept in your account on Google Firebase servers in Tokyo. The operator does not read them or use them for analytics or ads. Only members of the same ward can see a published roster.</p>
+  </section>
+
+  <footer class="small">
+    <a href="https://donald-deok.github.io/app-privacy/duty_roster.html">プライバシーポリシー / 개인정보처리방침 / Privacy Policy</a>
+    · kdhmny@gmail.com
+  </footer>
+</main>
+<script>
+  (function () {
+    var lang = document.documentElement.lang;
+    document.querySelectorAll("nav.langs a").forEach(function (a) {
+      if (a.getAttribute("data-l") === lang) a.setAttribute("aria-current", "true");
+    });
+    var t = { ja: "勤務表ビルダー — ルールで勤務表を自動作成", ko: "근무표 메이커 — 규칙대로 근무표 자동 작성", en: "Duty Roster Maker — rosters filled by your rules" };
+    document.title = t[lang] || t.en;
+  })();
+</script>
+</body>
+</html>
